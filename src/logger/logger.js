@@ -3,14 +3,5 @@ const welcomeFn = function (name){
 }
 //welcomeFn("sahil")
 module.exports.welcomeFn = welcomeFn
-const oddNum = function (){
-    const newArr = []
-    for(let i =0; i <= 20 ; i++){
-    if(i % 2!== 0 ){
-        newArr.push(i)
-    }
-}
-console.log(newArr)
-}
-oddNum()
+
 
