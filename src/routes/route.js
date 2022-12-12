@@ -13,6 +13,28 @@ router.get("/profile-details", function(req, res){
     res.send('dummy response')
 })
 
+router.get("/sol1", function (req, res) {
+    const arr = [1,2,3,5,6,7]
+
+let min = Math.min(...arr)
+let max = Math.max(...arr)
+
+for( let i = min; i<max; i++){
+  if(arr.includes(i) == false){
+    let result = i
+  res.send({data:result})
+  }
+}
+})
+router.get("/sol2", function (req, res) {
+    const arr2 = [33, 34, 35, 37, 38]
+    const n2 = arr2.length+1
+    const sum2 = ((n2*(arr2[0]+arr2[arr2.length-1]))/2)
+    const total2 = arr2.reduce((acc,val)=>acc+val,0)
+    let missingNum2 = sum2-total2
+    res.send({data: missingNum2})
+})
+
 router.get("/get/movies", function (req, res) {
     const arr = ["Rang de basanti", "The shining", "Lord of the rings", "Batman begins"]
     console.log("movies");
