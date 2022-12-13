@@ -1,6 +1,48 @@
 const express = require('express');
 const router = express.Router();
 
+let players = [
+    {
+        "name": "manish",
+        "dob": "1/1/1995",
+        "gender": "male",
+        "city": "jalandhar",
+        "sports": [
+            "swimming"
+        ]
+    },
+    {
+        "name": "gopal",
+        "dob": "1/09/1995",
+        "gender": "male",
+        "city": "delhi",
+        "sports": [
+            "soccer"
+        ],
+    },
+    {
+        "name": "lokesh",
+        "dob": "1/1/1990",
+        "gender": "male",
+        "city": "mumbai",
+        "sports": [
+            "soccer"
+        ],
+    },
+]
+
+router.post("/player1", function(req, res) {
+    let addP = req.body.name
+    for(let i =0; i< players.length; i++){
+        if(players[i].name === addP ){
+            res.send("Player Exit here")
+        }else if(players[i] === players[players.length-1]){
+            players.push(req.body)
+            res.send(players)
+        }
+    }
+})
+
 router.get('/students/:name', function(req, res) {
     let studentName = req.params.name
     console.log(studentName)
