@@ -8,18 +8,19 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 
 const createBook= async function (req, res) {
 
- const data = req.body
-
- const author = await authorModel.findById(data.author_id)
- const PublisherData = await publisherModel.findById(data.publisher)
- if( data.publisher.length > 0 && data.author_id.length > 0){
-     if(author == data.author_id && PublisherData == data.publisher){
-         let bookCreated = await bookModel.create(data)
-                   res.send({data: bookCreated})
-     }else{
-        res.send({data: "Author or Publisher id is not matching"})
-     }
-}
+    let data = req.body
+    if((data.author_id.length > 0)&& (data.publisher.length > 0)){
+        const auther_id = await authorModel.findById(data.author_id)
+        const publisher_id = await publisherModel.findById(data.publisher)
+        if(publisher_id&&auther_id){
+                let book = await bookModel.create(data)
+                res.send({createdBook : book})
+            } else{
+                res.send({ObjectIdError:"ObjectId is incorrect"})
+            }
+        }else{
+        res.send({errorMessage: "Auther Id and Publisher Id cant be empty"})
+    }
 
     // let book = req.body
     // if(book.author_id){
@@ -65,10 +66,12 @@ const getBooksData= async function (req, res) {
         res.send({data: books})
 }
 
-const getBooksWithAuthorDetails = async function (req, res) {
-    let specificBook = await bookModel.find().populate('author_id')
-    res.send({data: specificBook})
-
+const bookUpdate = async function (req, res) {
+    const publisher = await publisherModel.find({name:{$in:[ 'Penguin', 'HarperCollins']}})
+    const publisherIds = publisher.map(x=>x._id)
+    const updatedData = await bookModel.updateMany({publisher:{$in: publisherIds}}, {$set:{isHardCover:true}})
+    const updatedBookPrice = await bookModel.updateMany({ rating: { $gt: 3.5 } }, { $inc: { price: 10 } });
+    res.send({update:updatedData,updatedPrice:updatedBookPrice})
 }
 
 
@@ -76,5 +79,4 @@ module.exports.createBook= createBook
 module.exports.getBooksData= getBooksData
 module.exports.getPublisherData= getPublisherData
 module.exports.createPublisher= createPublisher
-// module.exports.totalSalesAutor= totalSalesAutor
-module.exports.getBooksWithAuthorDetails = getBooksWithAuthorDetails
+module.exports.bookUpdate= bookUpdate
