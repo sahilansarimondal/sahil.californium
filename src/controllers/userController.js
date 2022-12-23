@@ -1,8 +1,24 @@
 const { type } = require("express/lib/response")
-const UserModel= require("../models/userModel")
+const userModel= require("../models/userModel")
+const productModel = require("../models/productModel")
 
+const createUser = async function (req, res) {
+        const data = req.body
+        if(req.headers.isfreeappuser == "true"){
+             data.isFreeAppUser = true
+             const createdata = await userModel.create(data)
+             res.send({msg: createdata})
+        }else{
+            const createdata = await userModel.create(data)
+            res.send({msg: createdata})
+        }
+    }
 
-
+const createProduct = async function (req, res) {
+    const data = req.body
+    const createdata = await productModel.create(data)
+    res.send({msg: createdata})
+}
 
 const basicCode= async function(req, res) {
     
@@ -26,35 +42,6 @@ const basicCode= async function(req, res) {
     
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const createUser= async function (req, res) {
-    let data= req.body
-    let savedData= await UserModel.create(data)
-    res.send({msg: savedData})
-}
-
-const getUsersData= async function (req, res) {
-    let allUsers= await UserModel.find()
-    res.send({msg: allUsers})
-}
-
-module.exports.createUser= createUser
-module.exports.getUsersData= getUsersData
 module.exports.basicCode= basicCode
+module.exports.createUser= createUser
+module.exports.createProduct= createProduct
