@@ -8,5 +8,6 @@ router.get("/test-me", function (req, res) {
 })
 router.post("/createUser",ispaiduser.isFree, newUser.createUser)
 router.post("/createProduct", newUser.createProduct)
+router.post("/createOrder",ispaiduser.isFree, newUser.createOrder)
 
 module.exports = router;

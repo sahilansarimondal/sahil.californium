@@ -1,6 +1,8 @@
 const { type } = require("express/lib/response")
 const userModel= require("../models/userModel")
 const productModel = require("../models/productModel")
+const orderModel = require("../models/orderModel")
+// const orderModel = require("../models/orderModel")
 
 const createUser = async function (req, res) {
         const data = req.body
@@ -18,6 +20,36 @@ const createProduct = async function (req, res) {
     const data = req.body
     const createdata = await productModel.create(data)
     res.send({msg: createdata})
+}
+
+const createOrder = async function (req, res ) {
+    let data = req.body
+    data.isFreeAppUser = Boolean(req.headers.isfreeappuser)
+    let validateUser = await userModel.findById(data.userId)
+    let validateProduct = await productModel.findById(data.productId)
+    if(validateUser){
+        if(validateProduct){
+            if(req.headers.isfreeappuser=="true"){
+                let noAmmout = await orderModel.findOneAndUpdate({_id:data.userId},{$set:{amount:0}})
+                res.send({order:noAmmout})
+            }
+            else{
+                if(validateProduct.price<validateUser.balance){
+                    let order = await orderModel.create(data).populate('userId').populate('productId')
+                    let remainingBalance = validateUser.balance - validateProduct.price
+                    let updateUserBalance = await userModel.findOneAndUpdate({_id:data.userId},{$set:{balance:remainingBalance}},{new:true})
+                    res.send({orderData:order,updatedBalance:updateUserBalance})
+                }else{
+                    res.send({insuffisientBalance:"user doesn't have enough balance"})
+                }
+            }
+        }else{
+            res.send({WrongIdMsg:"ProductId is incorrect please give correct productId"})
+        }
+    }else{
+        res.send({WrongIdMsg:"UserId is incorrect please give correct UserId"})
+    }
+    
 }
 
 const basicCode= async function(req, res) {
@@ -45,3 +77,4 @@ const basicCode= async function(req, res) {
 module.exports.basicCode= basicCode
 module.exports.createUser= createUser
 module.exports.createProduct= createProduct
+module.exports.createOrder= createOrder
